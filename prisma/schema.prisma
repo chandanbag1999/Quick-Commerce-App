@@ -1,0 +1,35 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  DELIVERY
+}
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+// id = Supabase auth.users UUID (same value, not a foreign key since auth schema is separate)
+
+model User {
+  id            String   @id
+  name          String?
+  email         String?  @unique
+  phone         String?  @unique
+  phoneVerified Boolean  @default(false)
+  avatarUrl     String?
+  role          Role     @default(CUSTOMER)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("users")
+}
