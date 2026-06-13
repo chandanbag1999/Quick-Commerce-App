@@ -1,195 +1,136 @@
-# GoBasket API — AI Context Master File
+# CLAUDE.md
 
-> **RULE #1 FOR ANY AI MODEL:** Read this file FIRST before every session. Zero assumptions. Everything you need is here or linked below. If something is unclear, check the linked doc — do not guess.
-
----
-
-## What Is This Project?
-
-**GoBasket** is a **quick commerce (q-commerce) backend REST API** — think Blinkit/Zepto/Swiggy Instamart. Products are delivered in minutes. The architecture is designed for:
-
-- High throughput (many concurrent orders)
-- Sub-10-minute delivery SLA
-- Real-time inventory tracking
-- Redis-heavy caching for product/cart reads
-
-**Stack:** Node.js 20+ · Express 5 · TypeScript 5 · PostgreSQL · Redis · JWT Auth · Zod validation · Winston logging
-
-**Phase:** Development (not yet in production). No migrations, no seed data, no tests yet.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
-## Working Directory
+## What This Repository Is
 
-```
-/d/CodeSpace/Parmanent-Field/NodeJs/GoBasket_v1/API/
-```
+This is the **curriculum and documentation directory** for GoBasket — a Zepto-like quick commerce backend built over 30 days as a learning project targeting the 2026 Indian and global job market.
 
-**Entry points:**
-- `src/server.ts` — HTTP server bootstrap (process signals, port binding)
-- `src/app.ts` — Express app factory (middleware registration, router mounts)
-
-**Dev command:** `npm run dev` (uses `ts-node-dev`)
-**Build:** `npm run build` → outputs to `dist/`
+**There is no runnable code here.** This directory contains only `.md` guide files. The actual Node.js/TypeScript project will be created separately in a folder named `gobasket-backend/` when the user reaches that step in `DAY_01_FOUNDATION.md`.
 
 ---
 
-## Folder Structure (Exact)
+## Zero Assumption Protocol — Do This Before Every Task
 
-```
-src/
-├── modules/          ← business logic, one folder per domain
-│   ├── auth/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── repositories/
-│   │   ├── dto/
-│   │   ├── validators/
-│   │   ├── routes/
-│   │   └── auth.types.ts
-│   ├── users/        (same sub-structure)
-│   ├── products/     (same sub-structure)
-│   ├── categories/   (same sub-structure)
-│   ├── carts/        (same sub-structure)
-│   ├── orders/       (same sub-structure)
-│   └── inventory/    (same sub-structure)
-│
-├── shared/           ← reusable infrastructure, zero business logic
-│   ├── database/     ← DB client, migrations, seeds
-│   ├── redis/        ← singleton ioredis client (src/shared/redis/index.ts)
-│   ├── logger/       ← winston logger (src/shared/logger/index.ts)
-│   ├── constants/    ← HTTP_STATUS, CACHE_KEYS, ORDER_STATUS, USER_ROLES, etc.
-│   ├── exceptions/   ← AppError hierarchy (NotFoundError, BadRequestError, etc.)
-│   ├── middlewares/  ← errorHandler.ts, requestLogger.ts
-│   ├── guards/       ← auth.guard.ts (authenticate, authorize, adminOnly)
-│   ├── decorators/   ← (empty, for future use)
-│   └── utils/        ← response.ts, pagination.ts
-│
-├── config/
-│   ├── env.ts        ← typed env vars (import { env } from '@config/env')
-│   ├── database.ts   ← knex-style db config object
-│   ├── redis.ts      ← IORedis options
-│   └── app.ts        ← Express middleware setup (helmet, cors, rate-limit, etc.)
-│
-├── types/
-│   └── index.ts      ← JwtPayload, AuthenticatedRequest, ApiResponse, etc.
-│
-├── app.ts            ← Express app factory
-└── server.ts         ← HTTP server + graceful shutdown
-```
+**Read these files at the start of every session, in this order:**
+
+1. `SESSION_LOG.md` — what was done last session, what's pending, what's next
+2. `MASTER_PLAN.md` — current position in the 30-day roadmap
+3. The relevant `DAY_XX_*.md` file for today's work
+
+**Before any edit to an `.md` file:**
+- State what you are about to change and why
+- Check `SESSION_LOG.md` to confirm it aligns with what was last decided
+- Research from updated sources before writing technical content — do not write from training data alone
+
+**After every session:**
+- Update `SESSION_LOG.md` with what was done, what changed, and what the next session should start with
 
 ---
 
-## Path Aliases (tsconfig.json)
+## Repository Files
 
-Always use these — never relative `../../` paths:
+| File | Purpose |
+|------|---------|
+| `MASTER_PLAN.md` | 30-day learning roadmap with daily goals and outcomes |
+| `PHILOSOPHY.md` | Working principles, code quality rules, 2026 market context |
+| `ARCHITECTURE.md` | System design, modular folder structure, DB schema, module communication rules |
+| `TECH_STACK.md` | Every technology used with docs links and reasons for choosing it |
+| `DAY_01_FOUNDATION.md` | Day 1 guide — TypeScript, Fastify, project init, first server |
+| `SESSION_LOG.md` | Session-by-session log of decisions, changes, and pending items |
 
-| Alias | Resolves to |
-|-------|------------|
-| `@modules/*` | `src/modules/*` |
-| `@shared/*` | `src/shared/*` |
-| `@config/*` | `src/config/*` |
-| `@types/*` | `src/types/*` |
-
----
-
-## Module Architecture Pattern
-
-Every module follows this exact 5-layer pattern:
-
-```
-routes/     → defines Express Router, maps HTTP verbs to controller methods
-controllers/ → parses req/res, calls service, sends response via shared/utils/response.ts
-services/   → business logic, orchestrates repositories, throws AppError on failure
-repositories/ → raw DB queries only, returns plain objects/arrays, zero business logic
-dto/        → TypeScript interfaces for request/response shapes
-validators/ → Zod schemas that match dto interfaces
-```
-
-**Data flows one direction only:** Request → Router → Controller → Service → Repository → DB
+New daily guide files follow the naming convention: `DAY_XX_TOPIC_NAME.md`
 
 ---
 
-## Error Handling
+## Architectural Decisions Already Made
 
-All errors extend `AppError` from `src/shared/exceptions/index.ts`:
+These are finalized — do not reverse without explicit user instruction.
 
-```typescript
-throw new NotFoundError('Product');          // 404
-throw new BadRequestError('Invalid input');  // 400
-throw new UnauthorizedError();               // 401
-throw new ForbiddenError();                  // 403
-throw new ConflictError('Email');            // 409
-throw new ValidationError({ field: ['msg'] }); // 422
+### Pattern: Modular Monolith (Vertical Slicing)
+Each domain is a self-contained module. The horizontal/layered pattern (`controllers/`, `services/`, `repositories/` at the root) was explicitly **rejected** in Session 2.
+
+```
+src/modules/auth/          ← routes, controller, service, repository, schema, types all here
+src/modules/products/
+src/modules/orders/jobs/   ← module-specific background jobs live inside the module
+src/shared/                ← database, cache, errors, utils — used by all modules, never cross-module
+src/plugins/               ← Fastify global plugins (cors, helmet, rate-limit, swagger)
+src/config/env.ts          ← Zod-validated environment variables
 ```
 
-The global `errorHandler` middleware in `src/shared/middlewares/errorHandler.ts` catches all of these and formats the JSON response. **Never call `res.status().json()` directly in a catch block** — throw and let the middleware handle it.
+**Module communication rule:** Modules import only from `src/shared/` — never directly from each other. Cross-module data flows through the repository layer or a job queue.
 
----
+**Module anatomy** (every module follows this exact pattern):
+```
+auth.module.ts      ← Fastify plugin entry point (uses fastify-plugin / fp())
+auth.routes.ts      ← URL + HTTP method → controller function
+auth.controller.ts  ← parse request, call service, send response
+auth.service.ts     ← business logic only, no HTTP knowledge
+auth.repository.ts  ← database queries only, no business logic
+auth.schema.ts      ← Zod + JSON Schema for request/response validation
+auth.types.ts       ← TypeScript interfaces scoped to this module
+```
 
-## Response Helpers
+### Tech Stack (Fixed for 30 Days)
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Runtime | Node.js 22 LTS | |
+| Language | TypeScript 5.x strict mode | |
+| Framework | Fastify v5 | NOT Express |
+| ORM | Prisma 5 | schema in `prisma/schema.prisma` |
+| Database | PostgreSQL 16 | Supabase for cloud (free tier) |
+| Cache/Queue backend | Redis 7 | Upstash for cloud (free tier) |
+| Job queue | BullMQ | |
+| Validation | Zod | also used for env var validation |
+| Testing | Vitest | NOT Jest |
+| Package manager | pnpm | NOT npm or yarn |
+| API docs | @fastify/swagger + @fastify/swagger-ui | served at `/docs` |
+| Payments | Razorpay | Indian market standard |
 
-Always use these from `src/shared/utils/response.ts`:
+### Project Scripts (once `gobasket-backend/` exists)
+```bash
+pnpm dev          # tsx watch src/server.ts
+pnpm build        # tsc
+pnpm start        # node dist/server.js
+pnpm test         # vitest run
+pnpm test:watch   # vitest
+```
 
-```typescript
-sendSuccess(res, data, 'message')       // 200
-sendCreated(res, data, 'message')       // 201
-sendPaginated(res, data, meta)          // 200 + pagination meta
-sendNoContent(res)                      // 204
+### Test Structure
+Tests mirror the modules structure exactly:
+```
+tests/modules/auth/auth.service.test.ts    ← unit test
+tests/modules/auth/auth.routes.test.ts     ← integration test (uses app.inject())
+tests/helpers/test-app.ts                  ← build Fastify app without opening a port
+tests/helpers/factories.ts                 ← test data factories
 ```
 
 ---
 
-## Authentication & Authorization
+## How to Add a New Day Guide
 
-- JWT access tokens (15m expiry), refresh tokens (7d expiry)
-- Tokens verified in `src/shared/guards/auth.guard.ts`
-- Authenticated user available as `(req as AuthenticatedRequest).user`
-- Roles: `customer` | `admin` | `delivery` (see `USER_ROLES` in constants)
-- Usage: `router.use(authenticate)` then `router.delete('/', adminOnly, handler)`
-
----
-
-## Environment
-
-All env vars live in `.env` (not committed). Template at `.env.example`. Access them only through `src/config/env.ts` — never `process.env.X` directly outside that file.
-
-Key vars: `PORT`, `DB_*`, `REDIS_*`, `JWT_*`, `NODE_ENV`
+When creating `DAY_XX_TOPIC.md`:
+1. Check `SESSION_LOG.md` to confirm it is the correct next day
+2. Read the previous day's guide to understand what was built
+3. Research the topic from official/current docs before writing — do not rely on training data for version-specific details
+4. Structure: Zero Assumption Check → WHY (concepts) → HOW (step-by-step) → Interview Questions → Checklist → What's Next
+5. All code paths in examples must match the modular monolith structure above
+6. After creating the file, update `SESSION_LOG.md`
 
 ---
 
-## Modules Status (Development Phase)
+## Memory System
 
-| Module | Status | Notes |
-|--------|--------|-------|
-| auth | Scaffold only | No controller/service/repo yet |
-| users | Scaffold only | |
-| products | Scaffold only | |
-| categories | Scaffold only | |
-| carts | Scaffold only | |
-| orders | Scaffold only | |
-| inventory | Scaffold only | |
+Persistent memory lives at:
+`C:/Users/Admin/.claude/projects/D--CodeSpace-Parmanent-Field-NodeJs-backend-GoBasket/memory/`
 
-Router mounts are commented out in `src/app.ts` — uncomment as each module is built.
+Key memory files:
+- `project_gobasket.md` — project context and 30-day roadmap status
+- `tech_stack_decisions.md` — architecture decisions with reasons (includes the modular monolith decision)
+- `feedback_working_style.md` — zero assumption protocol details
+- `user_profile.md` — learner profile, market target
 
----
-
-## What Has NOT Been Built Yet
-
-- Database client (no knex/prisma installed yet, `src/shared/database/` is empty)
-- Any actual controller/service/repository/route files
-- Tests (Jest not configured)
-- Migrations / seed data
-- Payment gateway integration
-- Push notifications
-- Delivery tracking
-
----
-
-## Read Next
-
-- `docs/ARCHITECTURE.md` — system design decisions and rationale
-- `docs/MODULES.md` — what each module owns, its DB tables, its endpoints
-- `docs/CONVENTIONS.md` — naming, file patterns, do/don't rules
-- `docs/DATABASE.md` — schema design and ER diagram (text)
-- `docs/API_CONTRACTS.md` — request/response shapes for all endpoints
+Always read relevant memory files before starting work. Always update `tech_stack_decisions.md` when an architectural decision changes.
