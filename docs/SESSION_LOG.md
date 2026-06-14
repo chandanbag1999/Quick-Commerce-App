@@ -86,6 +86,49 @@ src/plugins/               ← Fastify global plugins
 
 ---
 
+## Session 6 — 2026-06-14 ✅ DAY 4 COMPLETE
+
+### Status: Day 4 — FULLY IMPLEMENTED AND VERIFIED
+
+### What Was Done
+1. Installed `prisma@7.8.0` (devDep), `@prisma/client@7.8.0`, `@prisma/adapter-pg@7.8.0`, `pg@8.21.0`, `@types/pg`
+2. Approved build scripts for `prisma` and `@prisma/engines` in `pnpm-workspace.yaml`
+3. Created `prisma/schema.prisma` — Prisma 7 format (`prisma-client` generator, no URL in datasource)
+4. Created `prisma.config.ts` at project root — Prisma 7 config (URL lives here now)
+5. Ran `pnpm dlx prisma generate` → client generated at `src/generated/prisma/`
+6. Created `src/shared/database/prisma.client.ts` — singleton with `PrismaPg` adapter
+7. Created `src/shared/database/database.plugin.ts` — Fastify fp() plugin, decorates `fastify.db`
+8. Updated `src/app.ts` — registers `databasePlugin` before domain modules
+9. Updated `.env` — added `DIRECT_URL`
+10. Updated `.env.example` — Supabase URL format examples
+11. Updated `.gitignore` — added `src/generated/` (never commit generated Prisma client)
+12. Updated `eslint.config.js` — added `src/generated/` to ignores
+13. Updated `package.json` — added `db:generate`, `db:migrate`, `db:push`, `db:studio`, `db:seed` scripts; `prepare` now also runs `prisma generate`
+14. Created `docs/DAY_04_POSTGRESQL.md`
+15. Server verified: starts with database plugin registered, no connection needed (lazy connect) ✅
+
+### Critical Prisma 7 Breaking Changes (Document for Future)
+- `url = env(...)` REMOVED from `schema.prisma` datasource
+- `directUrl = env(...)` REMOVED from `schema.prisma` datasource
+- `prisma-client-js` generator REPLACED by `prisma-client` with mandatory `output` path
+- `@prisma/adapter-pg` + `pg` required (no more Rust query engine)
+- New `prisma.config.ts` at project root handles all configuration
+- Import path for PrismaClient: `from '../../generated/prisma/client.js'` (not `@prisma/client`)
+
+### What User Needs to Do
+- [ ] Create Supabase account and project (region: Southeast Asia)
+- [ ] Get Transaction Pooler URL → update `DATABASE_URL` in `.env`
+- [ ] Get Direct Connection URL → update `DIRECT_URL` in `.env`
+- [ ] Run `pnpm db:studio` to verify connection works
+
+### Next Session — Day 5
+1. Read SESSION_LOG.md + MASTER_PLAN.md
+2. Create `docs/DAY_05_PRISMA_SCHEMA.md`
+3. Topics: Design User, Product, Category models, relations, run first migration
+4. Implement: Add Prisma models to schema.prisma, run `pnpm db:migrate`
+
+---
+
 ## Session 5 — 2026-06-14 ✅ DAY 3 COMPLETE
 
 ### Status: Day 3 — FULLY IMPLEMENTED AND VERIFIED

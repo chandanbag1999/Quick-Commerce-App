@@ -6,6 +6,7 @@ import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import { env } from './config/env.js'
 import { AppError } from './shared/errors/http.errors.js'
+import databasePlugin from './shared/database/database.plugin.js'
 import healthModule from './modules/health/health.module.js'
 
 export async function buildApp() {
@@ -71,6 +72,9 @@ export async function buildApp() {
     routePrefix: '/docs',
     uiConfig: { docExpansion: 'list', deepLinking: false },
   })
+
+  // Shared infrastructure — must be registered BEFORE domain modules
+  await app.register(databasePlugin)
 
   // Domain modules
   await app.register(healthModule)

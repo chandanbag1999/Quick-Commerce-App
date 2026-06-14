@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier'
 export default tseslint.config(
   // Global ignores — these files are never linted
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.js'],
+    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.js', 'src/generated/'],
   },
 
   // JavaScript recommended rules
