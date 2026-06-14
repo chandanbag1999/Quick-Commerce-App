@@ -6,6 +6,7 @@ import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import { env } from './config/env.js'
 import { AppError } from './shared/errors/http.errors.js'
+import healthModule from './modules/health/health.module.js'
 
 export async function buildApp() {
   const app = Fastify({
@@ -70,6 +71,9 @@ export async function buildApp() {
     routePrefix: '/docs',
     uiConfig: { docExpansion: 'list', deepLinking: false },
   })
+
+  // Domain modules
+  await app.register(healthModule)
 
   app.setErrorHandler((error, _request, reply) => {
     app.log.error(error)

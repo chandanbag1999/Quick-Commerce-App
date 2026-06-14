@@ -86,6 +86,40 @@ src/plugins/               ← Fastify global plugins
 
 ---
 
+## Session 4 — 2026-06-14 ✅ DAY 2 COMPLETE
+
+### Status: Day 2 — FULLY IMPLEMENTED AND VERIFIED
+
+### What Was Done
+1. Installed `fastify-plugin` v6.0.0 (latest, released 2026-06-09)
+2. Created `docs/DAY_02_FASTIFY_DEEPDIVE.md` — full guide on plugins, hooks, module pattern
+3. Created full health module (all 7 files) in `src/modules/health/`:
+   - `health.types.ts`, `health.schema.ts`, `health.service.ts`, `health.repository.ts`
+   - `health.controller.ts`, `health.routes.ts`, `health.module.ts`
+4. Updated `app.ts` to register health module
+5. API versioning working: `/api/v1/health`
+6. Fixed Windows system `PORT=5000` conflict:
+   - Installed `cross-env` + added `PORT=3000` to `dev` script
+   - Downgraded `dotenv` to v16 (v17 uses dotenvx which behaves differently)
+
+### Verified
+- `GET /health` → 200 ✅ (root, Day 1 backward compat)
+- `GET /api/v1/health` → 200 ✅ (module, versioned — has `version` field)
+- `GET /docs` → 200 ✅ (Swagger UI)
+
+### Environment Notes
+- System has `PORT=5000` Windows env var — cross-env in dev script overrides it
+- dotenv v17 uses dotenvx under the hood (breaking change — downgraded to v16)
+- fastify-plugin v6 requires `fastify: '5.x'` in options
+
+### Next Session — Day 3
+1. Read SESSION_LOG.md + MASTER_PLAN.md
+2. Create `docs/DAY_03_GIT_CONVENTIONS.md`
+3. Topics: Git branching strategy, conventional commits, ESLint + Prettier setup
+4. Implement: ESLint + Prettier config files
+
+---
+
 ## Session 3 — 2026-06-14 ✅ DAY 1 COMPLETE
 
 ### Status: Day 1 — FULLY IMPLEMENTED AND VERIFIED
