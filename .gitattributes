@@ -1,0 +1,11 @@
+# Normalize line endings to LF for all text files
+# This stops the "LF will be replaced by CRLF" Git warnings on Windows
+* text=auto eol=lf
+
+# Declare binary files so Git never mangles them
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

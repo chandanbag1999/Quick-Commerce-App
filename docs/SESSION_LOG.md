@@ -86,6 +86,40 @@ src/plugins/               ← Fastify global plugins
 
 ---
 
+## Session 5 — 2026-06-14 ✅ DAY 3 COMPLETE
+
+### Status: Day 3 — FULLY IMPLEMENTED AND VERIFIED
+
+### What Was Done
+1. Installed ESLint v10.5.0, @eslint/js, typescript-eslint v8.61.0, eslint-config-prettier, prettier v3.8.4, husky v9, lint-staged v17, cross-env
+2. Created `eslint.config.js` — ESLint v9 flat config (breaking change from old .eslintrc)
+3. Created `.prettierrc` — no semis, single quotes, 100 printWidth, LF line endings
+4. Created `.prettierignore`
+5. Created `.editorconfig` — consistent indent/charset across all editors
+6. Created `.gitattributes` — normalize all line endings to LF (stops CRLF warnings)
+7. Husky initialized — `.husky/pre-commit` runs `pnpm exec lint-staged`
+8. lint-staged config in package.json — ESLint fix + Prettier on staged TS files
+9. Fixed `console.log` in server.ts → `process.stdout.write` (ESLint no-console rule)
+10. Ran `pnpm format` → Prettier formatted app.ts and health.controller.ts
+11. `pnpm lint` → 0 errors, 0 warnings ✅
+12. `pnpm format:check` → all files clean ✅
+13. Server verified working after all changes ✅
+14. Created `docs/DAY_03_GIT_CONVENTIONS.md`
+
+### Key Notes
+- ESLint v9 uses flat config (`eslint.config.js`) — old `.eslintrc` format is GONE
+- `typescript-eslint` v8 is the unified package (replaces separate `@typescript-eslint/parser` + `@typescript-eslint/eslint-plugin`)
+- husky v9 `prepare` script auto-runs on `pnpm install` — new devs get hooks automatically
+- `pnpm lint` maps to `eslint .` (not `eslint src --ext .ts` — --ext removed in v9)
+
+### Next Session — Day 4
+1. Read SESSION_LOG.md + MASTER_PLAN.md
+2. Create `docs/DAY_04_POSTGRESQL.md`
+3. Topics: PostgreSQL fundamentals, Supabase setup, connection pooling, psql CLI
+4. First Prisma schema definition
+
+---
+
 ## Session 4 — 2026-06-14 ✅ DAY 2 COMPLETE
 
 ### Status: Day 2 — FULLY IMPLEMENTED AND VERIFIED
